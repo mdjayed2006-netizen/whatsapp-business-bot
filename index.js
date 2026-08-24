@@ -1,10 +1,11 @@
+
 const { default: makeWASocket, useMultiFileAuthState, DisconnectReason } = require('@whiskeysockets/baileys');
 const QRCode = require('qrcode');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ 
-    model: 'gemini-flash',
+    model: 'gemini-1.5-flash-latest',
     systemInstruction: "You are an automated assistant for Mr. Jayed. Answer the user's question directly, accurately, and concisely in 1 to 2 short sentences max."
 });
 
@@ -46,11 +47,10 @@ async function startBot() {
                     const result = await model.generateContent(text);
                     const aiResponse = await result.response.text();
                     
-                    // Prepends your requested busy message to Gemini's reply
                     const finalReply = `Currently Mr. Jayed is busy.\n\n${aiResponse}`;
                     await sock.sendMessage(from, { text: finalReply });
                 } catch (error) {
-                    console.error("Gemini Error:", error);
+                    console.error("Gemini Error Detailed:", error);
                     await sock.sendMessage(from, { text: "Currently Mr. Jayed is busy. Please try messaging again later." });
                 }
             }
